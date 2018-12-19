@@ -30,6 +30,7 @@ class UserModuleTest extends TestCase
         ->assertSee('Joel')
         ->assertSee('Ellie');
     }
+    
     /** @test */
     function it_shows_a_default_message_if_the_users_list_is_empty()
     {
@@ -42,6 +43,7 @@ class UserModuleTest extends TestCase
     /** @test */
     function it_displays_the_users_details()
     {
+        $this->withExceptionHandling();
         $user = factory(User::class)->create([
             'name' => 'Duilio Palacios'
         ]);
@@ -54,6 +56,8 @@ class UserModuleTest extends TestCase
     /** @test */
     function it_displays_a_404_error_if_the_user_is_not_found()
     {
+
+
         $this->get('/usuarios/999')
             ->assertStatus(404)
             ->assertSee('Página no encontrada');
@@ -65,6 +69,95 @@ class UserModuleTest extends TestCase
     {
         $this->get('/usuarios/nuevo')
             ->assertStatus(200)
-            ->assertSee('Crear nuevo usuario');
+            ->assertSee('Crear usuario');
     }
+
+    /** @test */
+    function it_creates_a_new_user()
+    {
+        $this->withoutExceptionHandling();
+        $this->post('/usuarios/', [
+            'name' => 'Duilio',
+            'email' => 'duilio@styde.net',
+            'password' => '123456'
+        ])->assertRedirect('usuarios');
+
+        $this->assertCredentials([
+            'name' => 'Duilio',
+            'email' => 'duilio@styde.net',
+            'password' => '123456',
+        ]);
+    }
+    /** @test */
+    function the_name_is_required()
+    {
+        $this->from('usuarios/nuevo')
+            ->post('/usuarios/', [
+                'name' => '',
+                'email' => 'duilio@styde.net',
+                'password' => '123456'
+            ])
+            ->assertRedirect('usuarios/nuevo')
+            ->assertSessionHasErrors(['name' => 'El campo nombre es obligatorio']);
+        $this->assertEquals(0, User::count());
+    }
+
+    /** @test */
+    function the_email_is_required()
+    {
+        $this->from('usuarios/nuevo')
+            ->post('/usuarios/', [
+                'name' => 'Duilio',
+                'email' => '',
+                'password' => '123456'
+            ])
+            ->assertRedirect('usuarios/nuevo')
+            ->assertSessionHasErrors(['email']);
+        $this->assertEquals(0, User::count());
+    }
+    /** @test */
+    function the_email_must_be_valid()
+    {
+        $this->from('usuarios/nuevo')
+            ->post('/usuarios/', [
+                'name' => 'Duilio',
+                'email' => 'correo-no-valido',
+                'password' => '123456'
+            ])
+            ->assertRedirect('usuarios/nuevo')
+            ->assertSessionHasErrors(['email']);
+        $this->assertEquals(0, User::count());
+    }
+    /** @test */
+    function the_email_must_be_unique()
+    {
+        factory(User::class)->create([
+            'email' => 'duilio@styde.net'
+        ]);
+        $this->from('usuarios/nuevo')
+            ->post('/usuarios/', [
+                'name' => 'Duilio',
+                'email' => 'duilio@styde.net',
+                'password' => '123456'
+            ])
+            ->assertRedirect('usuarios/nuevo')
+            ->assertSessionHasErrors(['email']);
+        $this->assertEquals(1, User::count());
+    }
+    /** @test */
+    function the_password_is_required()
+    {
+        $this->from('usuarios/nuevo')
+            ->post('/usuarios/', [
+                'name' => 'Duilio',
+                'email' => 'duilio@styde.net',
+                'password' => ''
+            ])
+            ->assertRedirect('usuarios/nuevo')
+            ->assertSessionHasErrors(['password']);
+        $this->assertEquals(0, User::count());
+    }
+
+
+
 }
