@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\User;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 
 class UserController extends Controller
 {
@@ -42,6 +43,36 @@ class UserController extends Controller
             'password' => bcrypt($data['password'])
         ]);
         return redirect()->route('users.index');
+    }
+
+    public function edit(User $user)
+    {
+        return view('users.edit', compact('user'));
+    }
+
+    public function update(User $user)
+    {
+        $data = request()->validate([
+            'name' => 'required',
+            'email' => ['required', 'email', Rule::unique('users')->ignore($user->id)],
+            'password' => '',
+        ], [
+            'name.required' => 'El campo nombre es obligatorio',
+            'email.required' => 'Ingresa una direccion de Correo Electrónico Válida',
+            'email.unique' => 'Ya existe un Usuario Con esta direccion de correo Electrónico',
+            'password.required' => 'El Campo password es Requerido',
+            'password.min' => 'El password debe ser mayor de 6 caracteres'
+        ]);
+
+        if ($data['password'] !=null){
+            $data['password'] = bcrypt($data['password']);
+        }else {
+            unset($data['password']);
+        }
+
+        $user->update($data);
+
+        return redirect()->route('users.show', ['user'=>$user]);
     }
 
 }
