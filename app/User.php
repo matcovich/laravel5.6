@@ -4,6 +4,7 @@ namespace App;
 
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Support\Facades\DB;
 
 class User extends Authenticatable
 {
@@ -15,7 +16,7 @@ class User extends Authenticatable
      * @var array
      */
     protected $fillable = [
-        'name', 'email', 'password',
+        'name', 'email', 'password'
     ];
 
     /**
@@ -41,6 +42,10 @@ class User extends Authenticatable
         return $this->belongsTo(Profession::class);
     }
 
+    public function profile()
+    {
+        return $this->hasOne(UserProfile::class);
+    }
 
     public function isAdmin()
     {

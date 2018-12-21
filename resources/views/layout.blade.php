@@ -38,10 +38,10 @@
 <!-- Begin page content -->
 <main role="main" class="container">
     <div class="row mt-3">
-        <div class="col-8">
+        <div class="col-lg-8 col-md-12">
             @yield('content')
         </div>
-        <div class="col-4">
+        <div class="col-lg-8 col-md-12">
             <p>&nbsp;</p>
         </div>
     </div>
