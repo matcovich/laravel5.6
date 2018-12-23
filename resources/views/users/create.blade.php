@@ -42,6 +42,34 @@
                 </div>
 
                 <div class="form-group">
+                    <label for="profession_id">Profesión</label>
+                    <select name="profession_id" id="profession_id" class="form-control">
+                        <option value="">Selecciona una profesión</option>
+                        @foreach($professions as $profession)
+                            <option value="{{ $profession->id }}"{{ old('profession_id') == $profession->id ? ' selected' : '' }}>
+                                {{ $profession->title }}
+                            </option>
+                        @endforeach
+                    </select>
+                </div>
+
+
+                <h5>Habilidades</h5>
+
+                @foreach($skills as $skill)
+                    <div class="form-check form-check-inline">
+                        <input name="skills[{{ $skill->id }}]"
+                               class="form-check-input"
+                               type="checkbox"
+                               id="skill_{{ $skill->id }}"
+                               value="{{ $skill->id }}"
+                                {{ old("skills.{$skill->id}") ? 'checked' : '' }}>
+                        <label class="form-check-label" for="skill_{{ $skill->id }}">{{ $skill->name }}</label>
+                    </div>
+                @endforeach
+
+
+                <div class="form-group">
                     <label for="twitter">Twitter:</label>
                     <input type="text" class="form-control" name="twitter" id="twitter" placeholder="https://twitter.com/Stydenet" value="{{ old('twitter') }}">
                 </div>
