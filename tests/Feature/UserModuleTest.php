@@ -98,6 +98,7 @@ class UserModuleTest extends TestCase
             'name' => 'Duilio',
             'email' => 'duilio@styde.net',
             'password' => '123456',
+            'role' => 'user',
         ]);
 
         $user = User::findByEmail('duilio@styde.net');
@@ -144,6 +145,29 @@ class UserModuleTest extends TestCase
             'user_id' => User::findByEmail('duilio@styde.net')->id,
         ]);
     }
+
+    /** @test */
+    function the_role_field_is_optional()
+    {
+        $this->withoutExceptionHandling();
+        $this->post('/usuarios/', $this->getValidData([
+            'role' => null,
+        ]))->assertRedirect('usuarios');
+        $this->assertDatabaseHas('users', [
+            'email' => 'duilio@styde.net',
+            'role' => 'user',
+        ]);
+    }
+    /** @test */
+    function the_role_must_be_valid()
+    {
+        $this->handleValidationExceptions();
+        $this->post('/usuarios/', $this->getValidData([
+            'role' => 'invalid-role',
+        ]))->assertSessionHasErrors('role');
+        $this->assertDatabaseEmpty('users');
+    }
+
 
     /** @test */
     function the_profession_id_field_is_optional()
@@ -249,7 +273,6 @@ class UserModuleTest extends TestCase
             ->assertSessionHasErrors(['profession_id']);
         $this->assertDatabaseEmpty('users');
     }
-
     /** @test */
     function the_skills_must_be_an_array()
     {
@@ -276,7 +299,6 @@ class UserModuleTest extends TestCase
             ->assertSessionHasErrors(['skills']);
         $this->assertDatabaseEmpty('users');
     }
-
     /** @test */
     function it_loads_the_edit_users_page()
     {
@@ -290,8 +312,6 @@ class UserModuleTest extends TestCase
                 return $viewUser->id === $user->id;
             });
     }
-
-
     /** @test */
     function it_updates_a_user()
     {
@@ -424,6 +444,8 @@ class UserModuleTest extends TestCase
             'profession_id' => $this->profession->id,
             'bio' => 'Programador de Laravel y Vue.js',
             'twitter' => 'https://twitter.com/sileence',
+            'role' => 'user',
+
         ], $custom);
     }
 

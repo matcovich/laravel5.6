@@ -68,6 +68,19 @@
                     </div>
                 @endforeach
 
+                <h5 class="mt-3">Rol</h5>
+
+                @foreach($roles as $role => $name)
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input"
+                               type="radio"
+                               name="role"
+                               id="role_{{ $role }}"
+                               value="{{ $role }}"
+                                {{ old('role') == $role ? 'checked' : '' }}>
+                        <label class="form-check-label" for="role_{{ $role }}">{{ $name }}</label>
+                    </div>
+                @endforeach
 
                 <div class="form-group">
                     <label for="twitter">Twitter:</label>
