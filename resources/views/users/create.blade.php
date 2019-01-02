@@ -3,9 +3,10 @@
 @section('content')
     @card
         @slot('header', 'Crear nuevo usuario')
-            @include('shared._errors')
+            {{ new App\Http\ViewComponents\UserFields($user) }}
+
             <form method="POST" action="{{ url('usuarios') }}">
-                @include('users._fields')
+                @render('UserFields', compact('user'))
                 <button type="submit" class="btn btn-primary">Crear usuario</button>
                 <a href="{{ route('users.index') }}" class="btn btn-link">Regresar al listado de usuarios</a>
             </form>
