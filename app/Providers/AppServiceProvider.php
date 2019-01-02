@@ -3,7 +3,7 @@
 namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
-
+use App\Http\ViewComposers\UserFieldsComposer;
 class AppServiceProvider extends ServiceProvider
 {
     /**
@@ -12,9 +12,7 @@ class AppServiceProvider extends ServiceProvider
      * @return void
      */
     public function boot()
-    {
-        //
-    }
+    {}
 
     /**
      * Register any application services.

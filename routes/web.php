@@ -1,6 +1,6 @@
 <?php
 Route::get('/', function () {
-    return 'Home';
+    return view('welcome');
 });
 Route::get('/usuarios', 'UserController@index')
     ->name('users.index');
