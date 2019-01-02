@@ -2,13 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Forms\UserForm;
 use App\Http\Requests\CreateUserRequest;
-use App\Profession;
-use App\Skill;
 use App\User;
-use App\UserProfile;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rule;
 
 class UserController extends Controller
@@ -26,9 +22,7 @@ class UserController extends Controller
 
     public function create()
     {
-        $user = new User;
-
-        return view('users.create', compact('user'));
+        return new UserForm('users.create', new User);
     }
     public function store(CreateUserRequest $request)
     {
@@ -39,11 +33,7 @@ class UserController extends Controller
 
     public function edit(User $user)
     {
-        $professions = Profession::orderBy('title','ASC')->get();
-        $skills = Skill::orderBy('name','ASC')->get();
-        $roles = trans('users.roles');
-
-        return view('users.edit', compact('user', 'professions', 'skills', 'roles'));
+        return new UserForm('users.edit', $user);
     }
 
     public function update(User $user)
