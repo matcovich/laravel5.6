@@ -42,6 +42,11 @@ class UserController extends Controller
             'name' => 'required',
             'email' => ['required', 'email', Rule::unique('users')->ignore($user->id)],
             'password' => '',
+            'role' => '',
+            'bio' => '',
+            'profession_id' => '',
+            'twitter' => '',
+            'skills' => '',
         ], [
             'name.required' => 'El campo nombre es obligatorio',
             'email.required' => 'Ingresa una direccion de Correo Electrónico Válida',
@@ -56,7 +61,11 @@ class UserController extends Controller
             unset($data['password']);
         }
 
-        $user->update($data);
+        $user->fill($data);
+        $user->role = $data['role'];
+        $user->save();
+        $user->profile->update($data);
+        $user->skills()->sync($data['skills'] ?? []);
 
         return redirect()->route('users.show', ['user'=>$user]);
     }
