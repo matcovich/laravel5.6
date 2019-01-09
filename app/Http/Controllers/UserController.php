@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Forms\UserForm;
 use App\Http\Requests\CreateUserRequest;
+use App\Http\Requests\UpdateUserRequest;
 use App\User;
 use Illuminate\Validation\Rule;
 
@@ -36,38 +37,10 @@ class UserController extends Controller
         return new UserForm('users.edit', $user);
     }
 
-    public function update(User $user)
+    public function update(UpdateUserRequest $request, User $user)
     {
-        $data = request()->validate([
-            'name' => 'required',
-            'email' => ['required', 'email', Rule::unique('users')->ignore($user->id)],
-            'password' => '',
-            'role' => '',
-            'bio' => '',
-            'profession_id' => '',
-            'twitter' => '',
-            'skills' => '',
-        ], [
-            'name.required' => 'El campo nombre es obligatorio',
-            'email.required' => 'Ingresa una direccion de Correo Electrónico Válida',
-            'email.unique' => 'Ya existe un Usuario Con esta direccion de correo Electrónico',
-            'password.required' => 'El Campo password es Requerido',
-            'password.min' => 'El password debe ser mayor de 6 caracteres'
-        ]);
-
-        if ($data['password'] !=null){
-            $data['password'] = bcrypt($data['password']);
-        }else {
-            unset($data['password']);
-        }
-
-        $user->fill($data);
-        $user->role = $data['role'];
-        $user->save();
-        $user->profile->update($data);
-        $user->skills()->sync($data['skills'] ?? []);
-
-        return redirect()->route('users.show', ['user'=>$user]);
+        $request->updateUser($user);
+        return redirect()->route('users.show', ['user' => $user]);
     }
 
 
