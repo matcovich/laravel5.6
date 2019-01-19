@@ -20,7 +20,7 @@ class ListUsersTest extends TestCase
         ]);
         $this->get('/usuarios')
             ->assertStatus(200)
-            ->assertSee('de Usuarios')
+
             ->assertSee('Joel')
             ->assertSee('Ellie');
     }
