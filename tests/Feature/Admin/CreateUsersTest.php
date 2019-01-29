@@ -10,7 +10,8 @@ class CreateUsersTest extends TestCase
 {
     use RefreshDatabase;
     protected $defaultData =[
-        'name' => 'Duilio',
+        'first_name' => 'Duilio',
+        'last_name' => 'Palacios',
         'email' => 'duilio@styde.net',
         'password' => '123456',
         'profession_id' => '',
@@ -47,7 +48,8 @@ class CreateUsersTest extends TestCase
         ]))->assertRedirect('usuarios');
 
         $this->assertCredentials([
-            'name' => 'Duilio',
+            'first_name' => 'Duilio',
+            'last_name' => 'Palacios',
             'email' => 'duilio@styde.net',
             'password' => '123456',
             'role' => 'user',
@@ -84,7 +86,7 @@ class CreateUsersTest extends TestCase
         ]))->assertRedirect('usuarios');
 
         $this->assertCredentials([
-            'name' => 'Duilio',
+            'first_name' => 'Duilio',
             'email' => 'duilio@styde.net',
             'password' => '123456',
         ]);
@@ -121,7 +123,7 @@ class CreateUsersTest extends TestCase
             'profession_id' => null,
         ]))->assertRedirect('usuarios');
         $this->assertCredentials([
-            'name' => 'Duilio',
+            'first_name' => 'Duilio',
             'email' => 'duilio@styde.net',
             'password' => '123456',
         ]);
@@ -139,14 +141,25 @@ class CreateUsersTest extends TestCase
         $this->assertDatabaseEmpty('users');
     }
     /** @test */
-    function the_name_is_required()
+    function the_first_name_is_required()
     {
 
         $this->handleValidationExceptions();
         $this->post('/usuarios/', $this->withData([
-                'name' => '',
+                'first_name' => '',
             ]))
-            ->assertSessionHasErrors(['name' => 'El campo nombre es obligatorio']);
+            ->assertSessionHasErrors(['first_name' => 'El campo nombre es obligatorio']);
+        $this->assertDatabaseEmpty('users');
+    }
+    /** @test */
+    function the_last_name_is_required()
+    {
+
+        $this->handleValidationExceptions();
+        $this->post('/usuarios/', $this->withData([
+                'last_name' => '',
+            ]))
+            ->assertSessionHasErrors(['last_name' => 'El campo apellido es obligatorio']);
         $this->assertDatabaseEmpty('users');
     }
     /** @test */
